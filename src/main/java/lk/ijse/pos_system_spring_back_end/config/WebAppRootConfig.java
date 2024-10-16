@@ -1,6 +1,7 @@
 package lk.ijse.pos_system_spring_back_end.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan(basePackages = "lk.ijse.pos_system_spring_back_end")
+@EnableJpaRepositories(basePackages = "lk.ijse.pos_system_spring_back_end.dao")
+@EnableTransactionManagement
 public class WebAppRootConfig {
     @Bean
     public DataSource dataSource() {
@@ -32,7 +35,7 @@ public class WebAppRootConfig {
         vendorAdapter.setGenerateDdl(true);
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("lk.ijse.pos_system_spring_back_end");
+        factory.setPackagesToScan("lk.ijse.pos_system_spring_back_end.entity.Impl");
         factory.setDataSource(dataSource());
         return factory;
     }
@@ -41,5 +44,9 @@ public class WebAppRootConfig {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;
+    }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
