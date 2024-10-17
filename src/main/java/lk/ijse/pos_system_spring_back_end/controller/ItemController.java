@@ -49,14 +49,32 @@ public class ItemController {
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable("itemId") String itemId) {
-        String regexForCusId = "^I\\d{3}$";
-        Pattern pattern = Pattern.compile(regexForCusId);
+        String regexForItemId = "^I\\d{3}$";
+        Pattern pattern = Pattern.compile(regexForItemId);
         Matcher regexMatcher = pattern.matcher(itemId);
         try {
             if (!regexMatcher.matches()) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             itemService.deleteItem(itemId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (CustomerNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/{itemId}")
+    public ResponseEntity<Void> updateItem(@PathVariable ("itemId") String itemId, @RequestBody ItemDTO itemDTO) {
+        String regexForItemId = "^I\\d{3}$";
+        Pattern pattern = Pattern.compile(regexForItemId);
+        Matcher regexMatcher = pattern.matcher(itemId);
+        try {
+            if (!regexMatcher.matches() && itemDTO == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            itemService.updateItem(itemId, itemDTO);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CustomerNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
