@@ -1,5 +1,6 @@
 package lk.ijse.pos_system_spring_back_end.service.impl;
 
+import lk.ijse.pos_system_spring_back_end.customStatusCode.SelectedErrorStatus;
 import lk.ijse.pos_system_spring_back_end.dao.ItemDao;
 import lk.ijse.pos_system_spring_back_end.dto.Impl.ItemDTO;
 import lk.ijse.pos_system_spring_back_end.dto.ItemStatus;
@@ -49,6 +50,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemStatus getItem(String itemId) {
-        return null;
+        if (itemDao.existsById(itemId)) {
+            var itemEntity = itemDao.getReferenceById(itemId);
+            return itemMapping.toItemDTO(itemEntity);
+        } else {
+            return new SelectedErrorStatus(2,"Customer not found");
+        }
     }
 }

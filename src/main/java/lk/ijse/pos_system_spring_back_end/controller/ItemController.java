@@ -1,17 +1,20 @@
 package lk.ijse.pos_system_spring_back_end.controller;
 
+import lk.ijse.pos_system_spring_back_end.customStatusCode.SelectedErrorStatus;
+import lk.ijse.pos_system_spring_back_end.dto.CustomerStatus;
 import lk.ijse.pos_system_spring_back_end.dto.Impl.CustomerDTO;
 import lk.ijse.pos_system_spring_back_end.dto.Impl.ItemDTO;
+import lk.ijse.pos_system_spring_back_end.dto.ItemStatus;
 import lk.ijse.pos_system_spring_back_end.exception.DataPersistException;
 import lk.ijse.pos_system_spring_back_end.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/v1/item")
@@ -32,6 +35,15 @@ public class ItemController {
         }
     }
 
-
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{itemId}")
+    public ItemStatus getSelectedItem(@PathVariable("itemId") String itemId) {
+        String regexForItemId = "^I\\d{3}$";
+        Pattern pattern = Pattern.compile(regexForItemId);
+        Matcher regexMatcher = pattern.matcher(itemId);
+        if (!regexMatcher.matches()) {
+            return new SelectedErrorStatus(1,"Note ID is not valid");
+        }
+        return itemService.getItem(itemId);
+    }
 
 }
