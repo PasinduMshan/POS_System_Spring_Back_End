@@ -5,6 +5,7 @@ import lk.ijse.pos_system_spring_back_end.dto.CustomerStatus;
 import lk.ijse.pos_system_spring_back_end.dto.Impl.CustomerDTO;
 import lk.ijse.pos_system_spring_back_end.dto.Impl.ItemDTO;
 import lk.ijse.pos_system_spring_back_end.dto.ItemStatus;
+import lk.ijse.pos_system_spring_back_end.exception.CustomerNotFoundException;
 import lk.ijse.pos_system_spring_back_end.exception.DataPersistException;
 import lk.ijse.pos_system_spring_back_end.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,24 @@ public class ItemController {
             return new SelectedErrorStatus(1,"Note ID is not valid");
         }
         return itemService.getItem(itemId);
+    }
+
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{itemId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable("itemId") String itemId) {
+        String regexForCusId = "^I\\d{3}$";
+        Pattern pattern = Pattern.compile(regexForCusId);
+        Matcher regexMatcher = pattern.matcher(itemId);
+        try {
+            if (!regexMatcher.matches()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            itemService.deleteItem(itemId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (CustomerNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
