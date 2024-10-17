@@ -68,4 +68,24 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PutMapping(value = "/{cusId}")
+    public ResponseEntity<Void> updateCustomer(@PathVariable ("cusId") String cusID, @RequestBody CustomerDTO customerDTO) {
+        String regexForCusId = "^C\\d{3}$";
+        Pattern pattern = Pattern.compile(regexForCusId);
+        Matcher regexMatcher = pattern.matcher(cusID);
+        try {
+            if (!regexMatcher.matches() && customerDTO == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            customerService.updateCustomer(cusID, customerDTO);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (CustomerNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
