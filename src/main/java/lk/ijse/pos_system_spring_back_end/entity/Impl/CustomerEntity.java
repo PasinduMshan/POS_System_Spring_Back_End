@@ -2,11 +2,14 @@ package lk.ijse.pos_system_spring_back_end.entity.Impl;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lk.ijse.pos_system_spring_back_end.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,4 +23,6 @@ public class CustomerEntity implements SuperEntity {
     private String cusAddress;
     private String cusTel;
     private String cusNIC;
+    @OneToMany(mappedBy = "customer")
+    private List<OrderEntity> orderList;
 }
