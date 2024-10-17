@@ -60,7 +60,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getAllItems() {
-        return List.of();
+        List<ItemEntity> allItems = itemDao.findAll();
+        return itemMapping.asItemDTOList(allItems);
     }
 
     @Override
